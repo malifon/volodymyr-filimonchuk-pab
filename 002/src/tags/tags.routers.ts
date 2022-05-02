@@ -1,14 +1,14 @@
 import express, { Request, Response } from "express";
-import * as NoteService from "./notes.service";
-import { INote } from "./notes.modal";
+import * as TagService from "./tags.service";
+import { ITag } from "./tags.modal";
 
-export const notesRouter = express.Router();
+export const tagsRouter = express.Router();
 
-notesRouter.post("/", async (req: Request, res: Response) => {
+tagsRouter.post("/", async (req: Request, res: Response) => {
   try {
-    const item: INote = req.body;
+    const item: ITag = req.body;
 
-    const note = await NoteService.create(item);
+    const note = await TagService.create(item);
 
     res.status(201).json(note);
   } catch (e: unknown) {
@@ -17,11 +17,11 @@ notesRouter.post("/", async (req: Request, res: Response) => {
     }
   }
 });
-notesRouter.put("/", async (req: Request, res: Response) => {
+tagsRouter.put("/", async (req: Request, res: Response) => {
   try {
-    const item: INote = req.body;
+    const item: ITag = req.body;
 
-    const note = await NoteService.edit(item);
+    const note = await TagService.edit(item);
 
     res.status(201).json(note);
   } catch (e: unknown) {
@@ -31,12 +31,12 @@ notesRouter.put("/", async (req: Request, res: Response) => {
   }
 });
 
-notesRouter.get("/:id", async (req: Request, res: Response) => {
+tagsRouter.get("/:id", async (req: Request, res: Response) => {
   try {
     if (req.params.id) {
       let id: number = +req.params.id;
 
-      const note = await NoteService.get(id);
+      const note = await TagService.get(id);
       res.status(200).json(note);
     }
   } catch (e: unknown) {
@@ -46,9 +46,9 @@ notesRouter.get("/:id", async (req: Request, res: Response) => {
   }
 });
 
-notesRouter.get("/", async (req: Request, res: Response) => {
+tagsRouter.get("*", async (req: Request, res: Response) => {
   try {
-    const note = await NoteService.getAll();
+    const note = await TagService.getAll();
     res.status(200).json(note);
   } catch (e: unknown) {
     if (e instanceof Error) {
@@ -57,12 +57,12 @@ notesRouter.get("/", async (req: Request, res: Response) => {
   }
 });
 
-notesRouter.delete("/:id", async (req: Request, res: Response) => {
+tagsRouter.delete("/:id", async (req: Request, res: Response) => {
   try {
     if (req.params.id) {
       let id: number = +req.params.id;
 
-      const note = await NoteService.remove(id);
+      const note = await TagService.remove(id);
       res.status(200).json(note);
     }
   } catch (e: unknown) {

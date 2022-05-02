@@ -1,11 +1,16 @@
-import express from 'express'
-import {Request, Response} from 'express'
-import { notesRouter } from './notes/notes.routers';
+import express from "express";
+import { PORT } from "./constants";
+import { notesRouter } from "./notes/notes.routers";
+import { tagsRouter } from "./tags/tags.routers";
 
-const app = express()
+const app = express();
 
-app.use(express.json())
+app.use(express.json());
 
 app.use("/note", notesRouter);
+app.use("/notes", notesRouter);
 
-app.listen(3000)
+app.use("/tag", tagsRouter);
+app.use("/tags", tagsRouter);
+
+app.listen(PORT);

@@ -1,7 +1,9 @@
+import { ITag } from "../tags/tags.modal";
+
 export interface INote {
   title: string;
   content: string;
   createDate?: Date;
-  type?: string[];
+  tags?: ITag[];
   id?: number;
 }
