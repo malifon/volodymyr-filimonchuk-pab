@@ -2,15 +2,12 @@ import fs from "fs";
 import { INote } from "../notes/notes.modal";
 import { ITag } from "../tags/tags.modal";
 
-export async function readStorage(
-  storeFile: string
-): Promise<any> {
-  try {
+export async function readStorage(storeFile: string): Promise<any> {
+  if (fs.existsSync(storeFile)) {
     const data = await fs.promises.readFile(storeFile, "utf-8");
-    return data ? JSON.parse(data) : [];
-  } catch (err) {
-    console.log(err);
+    return JSON.parse(data);
   }
+  return [];
 }
 
 export async function updateStorage(
