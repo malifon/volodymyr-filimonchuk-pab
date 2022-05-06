@@ -6,7 +6,7 @@ import { NOTES_FILE, TAGS_FILE, PATH } from "../constants";
 import { ITag } from "../tags/tags.modal";
 
 const isExistTag = async (item: ITag[] | undefined, token: string) => {
-  let tags: ITag[] = await readStorage(PATH + token + TAGS_FILE);
+  let tags: ITag[] = await readStorage(token + TAGS_FILE);
 
   if (!item || item.length === 0 || !tags) return;
 
@@ -16,7 +16,7 @@ const isExistTag = async (item: ITag[] | undefined, token: string) => {
     const result = tags.filter((i) => i.name === element.name);
 
     if (result.length > 0) {
-      await TagService.create(element, token.slice(0, 10));
+      await TagService.create(element, token);
     }
   }
 };
@@ -25,7 +25,7 @@ export const create = async (
   newItem: INote,
   token: string
 ): Promise<number | Error> => {
-  let notes: INote[] = await readStorage(PATH + token + NOTES_FILE);
+  let notes: INote[] = await readStorage(token + NOTES_FILE);
 
   if (!isString(newItem.title) || !isString(newItem.content)) {
     throw new Error("This format is invalid!");
@@ -38,9 +38,13 @@ export const create = async (
 
   isExistTag(newItem.tags, token);
   const id: number = +new Date();
+  console.log(notes);
   notes.push({ id, ...newItem });
 
-  await updateStorage(PATH + token + NOTES_FILE, notes);
+  console.log(notes);
+  
+
+  await updateStorage(token + NOTES_FILE, notes).then((res)=>console.log(res));
   return id;
 };
 
@@ -48,7 +52,7 @@ export const get = async (
   id: number,
   token: string
 ): Promise<INote | Error> => {
-  let notes: INote[] = await readStorage(PATH + token + NOTES_FILE);
+  let notes: INote[] = await readStorage(token + NOTES_FILE);
 
   const result = notes.filter((i) => i.id === id)[0];
 
@@ -59,20 +63,20 @@ export const get = async (
 };
 
 export const getAll = async (token: string): Promise<INote[]> => {
-  return await readStorage(PATH + token + NOTES_FILE);
+  return await readStorage(token + NOTES_FILE);
 };
 
 export const remove = async (
   id: number,
   token: string
 ): Promise<undefined | Error> => {
-  let notes: INote[] = await readStorage(PATH + token + NOTES_FILE);
+  let notes: INote[] = await readStorage(token + NOTES_FILE);
 
   const result = notes.filter((i) => i.id === id)[0];
 
   if (result) {
     notes = notes.filter((i) => i.id !== id);
-    await updateStorage(PATH + token + NOTES_FILE, notes);
+    await updateStorage(token + NOTES_FILE, notes);
     return;
   }
   throw new Error("This note not exist!");
@@ -97,13 +101,13 @@ export const edit = async (
 
   isExistTag(newItem.tags, token);
 
-  let notes: INote[] = await readStorage(PATH + token + NOTES_FILE);
+  let notes: INote[] = await readStorage(token + NOTES_FILE);
 
   let result = notes.filter((i) => i.id === newItem.id)[0];
 
   if (result) {
     notes = notes.map((i) => (i.id !== newItem.id ? newItem : i));
-    await updateStorage(PATH + token + NOTES_FILE, notes);
+    await updateStorage(token + NOTES_FILE, notes);
 
     return newItem;
   }

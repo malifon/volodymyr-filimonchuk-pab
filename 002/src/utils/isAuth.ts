@@ -13,8 +13,9 @@ export function authenticateToken(
 
   if (token == null) return res.sendStatus(401);
 
-  jwt.verify(token, SECRET, (err: any) => {
+  jwt.verify(token, SECRET, (err: any, decoded) => {
     if (err) return res.sendStatus(401);
+    res.locals = decoded;
     next();
   });
 }
