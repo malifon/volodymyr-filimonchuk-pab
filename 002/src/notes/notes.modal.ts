@@ -6,4 +6,5 @@ export interface INote {
   createDate?: Date;
   tags?: ITag[];
   id?: number;
+  isPrivate?: boolean;
 }

@@ -9,7 +9,11 @@ notesRouter.post("/", async (req: Request, res: Response) => {
     const authHeader = req.headers["authorization"];
     const token = authHeader?.split(" ")[1] || "iesratfwagvocyuvnaryst";
 
-    const item: INote = req.body;
+    let item: INote = req.body;
+
+    if (!item.isPrivate) {
+      item = { ...item, isPrivate: false };
+    }
 
     const note = await NoteService.create(item, token.slice(0, 10));
 
@@ -20,6 +24,51 @@ notesRouter.post("/", async (req: Request, res: Response) => {
     }
   }
 });
+
+notesRouter.post("/user/:userName", async (req: Request, res: Response) => {
+  try {
+    const authHeader = req.headers["authorization"];
+    const token = authHeader?.split(" ")[1] || "iesratfwagvocyuvnaryst";
+
+    const { userName } = req.params;
+
+    let item: INote = req.body;
+
+    if (!item.isPrivate) {
+      item = { ...item, isPrivate: false };
+    }
+
+    const note = await NoteService.create(
+      item,
+      userName + "-" + token.slice(0, 10)
+    );
+
+    res.status(201).json(note);
+  } catch (e: unknown) {
+    if (e instanceof Error) {
+      res.status(400).send(e.message);
+    }
+  }
+});
+
+notesRouter.get("/user/:userName", async (req: Request, res: Response) => {
+  try {
+    const authHeader = req.headers["authorization"];
+    const token = authHeader?.split(" ")[1] || "iesratfwagvocyuvnaryst";
+
+    const { userName } = req.params;
+
+    let note = await NoteService.getAll(userName + "-" + token.slice(0, 10));
+
+    note.filter((item) => !item.isPrivate);
+    res.status(201).json(note);
+  } catch (e: unknown) {
+    if (e instanceof Error) {
+      res.status(400).send(e.message);
+    }
+  }
+});
+
 notesRouter.put("/", async (req: Request, res: Response) => {
   try {
     const authHeader = req.headers["authorization"];
