@@ -10,3 +10,7 @@ export function isBoolean(obj: any): obj is boolean {
 export function isArray(obj: any): obj is string[] {
   return Object.prototype.toString.call(obj) === "[object Array]";
 }
+
+export function isArrayString(arr: any): arr is string[] {
+  return isArray(arr) && arr.every((i) => typeof i === "string");
+}

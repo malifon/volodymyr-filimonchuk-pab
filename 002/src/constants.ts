@@ -1,7 +1,11 @@
 export const PORT = 3000;
 export const PATH = "./src/data/"
+export const BLACKLIST_PATH = PATH+"tokens.json"
 export const NOTES_FILE = "-notes.json";
 export const TAGS_FILE = "-tags.json";
+export const USERS_FILE = "users.json";
+export const NOTES = "notes";
+export const TAGS = "tags";
+export const USERS = "users";
 export const SECRET = "eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTY1MTU3NDMyMiwiaWF0IjoxNjUxNTc0MzIyfQ.zWv9LfTkRtSSKJn9YcwSmIc9qhjAAPzySbyAXbSxHBY"
-export const NOTE_MD = "notes";
-export const TAG_MD = "tags";
+export const ADMIN = "admin"

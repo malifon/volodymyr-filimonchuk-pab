@@ -1,23 +1,31 @@
 import fs from "fs";
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 import config from "../../config.json";
-import { NOTE_MD, PATH, TAG_MD } from "../constants";
-import { noteSchema, tagSchema } from "./schema";
+import { NOTES, PATH, TAGS, USERS } from "../constants";
+import { noteSchema, tagSchema, userSchema } from "./schema";
 
 export async function readStorage(storeFile: string): Promise<any> {
   if (config.type === "baza_danych") {
     await mongoose.connect(
       "mongodb+srv://malifon:1dPu5C94gWALCqM9@cluster0.rzf2k.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
     );
+    console.log(storeFile);
 
-    if (storeFile.includes("notes")) {
-      const Note = mongoose.model(storeFile, noteSchema);
+    if (storeFile.includes(NOTES)) {
+      const Note = mongoose.model(NOTES, noteSchema);
       const note = await Note.find({});
-      return note;
+      let userName = storeFile.split("-")[0];
+      return note.filter(
+        (i) =>
+          i.author === userName ||
+          i.userToAccess.some((email) => email === userName)
+      );
+    } else if (storeFile.includes(USERS)) {
+      const User = mongoose.model(storeFile, userSchema);
+      return await User.find({});
     } else {
-      const Tag = mongoose.model(storeFile, tagSchema);
-      const tag = await Tag.find({});
-      return tag;
+      const Tag = mongoose.model(TAGS, tagSchema);
+      return await Tag.find({});
     }
   }
 
@@ -32,24 +40,46 @@ export async function readStorage(storeFile: string): Promise<any> {
 
 export async function updateStorage(
   storeFile: string,
-  dataToSave: any
+  dataToSave: any,
+  isUpdate: boolean = false,
+  item: any = null
 ): Promise<any> {
   if (config.type === "baza_danych") {
     await mongoose.connect(
       "mongodb+srv://malifon:1dPu5C94gWALCqM9@cluster0.rzf2k.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
     );
 
-    if (!dataToSave[0].name) {
-      console.log(storeFile);
-      console.log(dataToSave);
+    const updateData = async (type, schema) => {
+      const Modal = mongoose.model(type, schema);
+      const doc = await Modal.findOne({ id: item.id });
+      console.log("doc: ", doc);
+      
+      doc.overwrite({...item});
+      return await doc.save();
+    };
 
-      const Note = mongoose.model(storeFile, noteSchema);
-      const note = new Note(dataToSave[dataToSave.length - 1]);
-      return await note.save();
+    const saveData = async (type, schema) => {
+      const Modal = mongoose.model(type, schema);
+      const modal = new Modal(dataToSave[dataToSave.length - 1]);
+      return await modal.save();
+    };
+
+    if (isUpdate) {
+      if (storeFile.includes(NOTES)) {
+        return updateData(NOTES, noteSchema);
+      } else if (storeFile.includes(USERS)) {
+        return updateData(USERS, userSchema);
+      } else {
+        return updateData(TAGS, tagSchema);
+      }
     } else {
-      const Tag = mongoose.model(storeFile, tagSchema);
-      const tag = new Tag(dataToSave[dataToSave.length - 1]);
-      return await tag.save();
+      if (storeFile.includes(NOTES)) {
+        return saveData(NOTES, noteSchema);
+      } else if (storeFile.includes(USERS)) {
+        return saveData(USERS, userSchema);
+      } else {
+        return saveData(TAGS, tagSchema);
+      }
     }
   }
 

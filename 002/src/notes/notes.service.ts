@@ -1,5 +1,10 @@
 import * as TagService from "../tags/tags.service";
-import { isString, isArray, isNumber } from "../utils/validator.utils";
+import {
+  isString,
+  isArray,
+  isNumber,
+  isArrayString,
+} from "../utils/validator.utils";
 import { INote } from "./notes.modal";
 import { readStorage, updateStorage } from "../utils/save.utils";
 import { NOTES_FILE, TAGS_FILE, PATH } from "../constants";
@@ -15,7 +20,7 @@ const isExistTag = async (item: ITag[] | undefined, token: string) => {
 
     const result = tags.filter((i) => i.name === element.name);
 
-    if (result.length > 0) {
+    if (result.length === 0) {
       await TagService.create(element, token);
     }
   }
@@ -35,16 +40,16 @@ export const create = async (
     throw new Error("Field createDate is invalid!");
   if (newItem.tags && !isArray(newItem.tags))
     throw new Error("Field tags is invalid!");
+  if (newItem.userToAccess && !isArrayString(newItem.userToAccess))
+    throw new Error("Field userToAccess is invalid!");
 
   isExistTag(newItem.tags, token);
   const id: number = +new Date();
-  console.log(notes);
-  notes.push({ id, ...newItem });
+  notes.push({ author: token, id, ...newItem });
 
-  console.log(notes);
-  
-
-  await updateStorage(token + NOTES_FILE, notes).then((res)=>console.log(res));
+  await updateStorage(token + NOTES_FILE, notes).then((res) =>
+    console.log(res)
+  );
   return id;
 };
 
@@ -107,7 +112,7 @@ export const edit = async (
 
   if (result) {
     notes = notes.map((i) => (i.id !== newItem.id ? newItem : i));
-    await updateStorage(token + NOTES_FILE, notes);
+    await updateStorage(token + NOTES_FILE, notes, true, result);
 
     return newItem;
   }
