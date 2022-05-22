@@ -3,6 +3,7 @@ export const PORT = 3000;
 export const BLACKLIST_PATH = PATH+"tokens.json"
 export const RESTAURANT_PATH = "restaurants";
 export const TABLE_PATH = "tables";
+export const ORDER_PATH = "order";
 export const RESERVATION_PATH = "reservation";
 export const WORKER_PATH = "worker";
 export const MENU_PATH = "menu";
