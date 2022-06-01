@@ -48,3 +48,13 @@ export const reservationSchema = new Schema({
   end: { type: Date, require: true },
   client: { type: String, require: true },
 });
+
+export const orderSchema = new Schema({
+  id: { type: Number, require: true },
+  worker: { type: Number, require: true },
+  table: { type: Number, require: true },
+  position: { type: Array, require: true },
+  status: { type: String, require: true },
+  sum: { type: Number, require: true },
+  reservation: { type: Number, require: true },
+});

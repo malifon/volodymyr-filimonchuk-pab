@@ -12,8 +12,8 @@ export const create = async (newItem: IOrder): Promise<number | Error> => {
 
   if (
     !isString(newItem.status) ||
-    !isString(newItem.worker) ||
-    !isString(newItem.table) ||
+    !isNumber(newItem.worker) ||
+    !isNumber(newItem.table) ||
     !isArray(newItem.position)
   ) {
     throw new Error("This format is invalid!");
@@ -22,6 +22,10 @@ export const create = async (newItem: IOrder): Promise<number | Error> => {
   const isWorker = await WorkerService.get(newItem.worker);
   const isTable = await TableService.get(newItem.table);
   const isReservation = await ReservationService.get(newItem.reservation);
+
+  if (!isReservation) throw new Error("This reservation not exist.");
+  if (!isTable) throw new Error("This table not exist.");
+  if (!isWorker) throw new Error("This worker not exist.");
 
   let sum = 0;
 
@@ -86,17 +90,20 @@ export const edit = async (newItem: IOrder): Promise<IOrder | Error> => {
 
   if (
     !isString(newItem.status) ||
-    !isString(newItem.worker) ||
-    !isString(newItem.table) ||
-    !isArray(newItem.position) ||
-    !isNumber(newItem.id)
+    !isNumber(newItem.worker) ||
+    !isNumber(newItem.table) ||
+    !isArray(newItem.position)
   ) {
     throw new Error("This format is invalid!");
   }
 
   const isWorker = await WorkerService.get(newItem.worker);
-  const isTable = await TableService.get(newItem.worker);
+  const isTable = await TableService.get(newItem.table);
   const isReservation = await ReservationService.get(newItem.reservation);
+
+  if (!isReservation) throw new Error("This reservation not exist.");
+  if (!isTable) throw new Error("This table not exist.");
+  if (!isWorker) throw new Error("This worker not exist.");
 
   let sum = 0;
 

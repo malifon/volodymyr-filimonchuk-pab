@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import config from "../../config.json";
 import {
   MENU_PATH,
+  ORDER_PATH,
   PATH,
   RESERVATION_PATH,
   RESTAURANT_PATH,
@@ -17,6 +18,7 @@ import {
   storageSchema,
   tableSchema,
   workerSchema,
+  orderSchema
 } from "./schema";
 
 const types = [
@@ -43,6 +45,10 @@ const types = [
   {
     path: RESERVATION_PATH,
     schema: reservationSchema,
+  },
+  {
+    path: ORDER_PATH,
+    schema: orderSchema,
   },
 ];
 
